@@ -5,7 +5,7 @@ pipeline {
         stage('Testing') {
             steps {
                 echo 'running test_myFirstTest.py'
-                bat 'pytest test_myFirstTest.py'  //pytest engaged
+                bat 'pytest project1_testing/test_myFirstTest.py'  //pytest engaged
             }
         }
     }
