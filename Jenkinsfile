@@ -1,27 +1,30 @@
 pipeline {
     agent any
 
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm //Jenkins job chooses repo
-            }
-        }
+    parameters{
+        choice(
+            name: 'modelChoice',
+            choices: ['all', 'model1', 'model2'],
+            description: 'Select which model to test'
+        )
+    }
 
+    environment {
+        modelChoice = "${params.modelChoice}"
+    }
+
+    stages { //checkout is automatic
         stage('Testing') {//assume pytest installed in env
             steps {
                 echo 'running test_myFirstTest.py'
                 bat '''
-                    python -m pytest project1_testing/test_myFirstTest.py
+                    python -m pytest project1_testing/test_myFirstTest.py --modelChoice %modelChoice%
                 '''  //pytest engaged
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline completed.'
-        }
         failure {
             echo 'A pipeline stage failed'
         }

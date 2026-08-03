@@ -6,8 +6,8 @@ def pytest_addoption(parser):
     parser.addoption(
         "--modelChoice",
         action="store",
-        default="model1",
-        choices=["model1", "model2"],
+        default="all",
+        choices=["all", "model1", "model2"],
         help="specify the model to test. default when specified: model1",
     )
 
@@ -18,6 +18,8 @@ def pytest_collection_modifyitems(items, config):
     If the user specifies a model, only tests marked with that model will be run."""
 
     modelChoice = config.getoption("--modelChoice")
+    if(modelChoice == "all"):
+        return  #no filtering needed
 
     selected_items = []
     deselected_items = []
