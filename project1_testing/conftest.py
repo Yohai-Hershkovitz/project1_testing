@@ -1,29 +1,34 @@
+from logging import config
+
 import pytest
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--modelN007",
-        action="store_true",
-        default=False,
-        help="Include modelN007 tests in test run",
+        "--modelChoice",
+        action="store",
+        default="model1",
+        choices=["model1", "model2"],
+        help="specify the model to test. default when specified: model1",
     )
 
+#before the hook runs, pytest should've verified the coice is valid.
 def pytest_collection_modifyitems(items, config):
-    """Deselect tests marked as modelN007 if --modelN007 is set."""  # so mark tests with modelN007 for it to work
+    """this is a demo for using command-line user input to filter tests.
+    The user can specify a model to test using the --modelChoice option.
+    If the user specifies a model, only tests marked with that model will be run."""
 
-    if config.option.modelN007 is True:
-        return
+    modelChoice = config.getoption("--modelChoice")
 
     selected_items = []
     deselected_items = []
 
     for item in items:  #all filtering should be nested 'if-else(elif)'s here
-        if item.get_closest_marker("modelN007"):
-            deselected_items.append(item)
-        else:
+        if item.get_closest_marker(modelChoice):
             selected_items.append(item)
-
-    config.hook.pytest_deselected(items=deselected_items)
+        else:
+            deselected_items.append(item)
+    
+    config.hook.pytest_deselected(items=deselected_items) #helps with explicit report of deselection
     items[:] = selected_items  #Slicing assignment (and not changing object aka not changing identity)
 
 # not done
