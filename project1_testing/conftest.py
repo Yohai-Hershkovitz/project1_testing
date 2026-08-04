@@ -1,6 +1,6 @@
 from logging import config
 
-import pytest
+import pytest  # type: ignore[import-not-found]
 
 def pytest_addoption(parser):
     parser.addoption(
